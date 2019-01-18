@@ -3,6 +3,8 @@ function get_key(key, laptop_key)
 % Written by KGS Lab
 % Edited by AS 8/2014
 
+laptop_key = [];
+
 while 1
     while 1
         [key_is_down, ~, key_code] = KbCheck(laptop_key);
@@ -11,7 +13,7 @@ while 1
         end
     end
     pressed_key = KbName(key_code);
-    if ismember(key, pressed_key)
+    if any(ismember(key, pressed_key))
         break
     end
 end

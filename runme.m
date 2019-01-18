@@ -1,4 +1,4 @@
-function runme(name, trigger, stim_set, num_runs, task_num, start_run)
+  function runme(name, trigger, stim_set, num_runs, task_num, start_run)
 % Prompts experimenter for session parameters and executes functional
 % localizer experiment used to define regions in high-level visual cortex
 % selective to faces, places, bodies, and printed characters.
@@ -65,8 +65,7 @@ if nargin < 6
     start_run = 1;
 end
 
-
-%% initialize session object and execute experiment
+%% initialize session4 object and execute experiment
 
 % setup fLocSession and save session information
 session = fLocSession(name, trigger, stim_set, num_runs, task_num);
@@ -81,7 +80,7 @@ save(fpath, 'session', '-v7.3');
 % execute all runs from start_run to num_runs and save parfiles
 fname = [session.id '_fLocSession.mat'];
 fpath = fullfile(session.exp_dir, 'data', session.id, fname);
-for rr = start_run:num_runs
+for rr = start_run
     session = run_exp(session, rr);
     save(fpath, 'session', '-v7.3');
 end

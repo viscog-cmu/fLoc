@@ -3,7 +3,7 @@ function [status, start_time] = start_scan
 % cable. --Michael 09/30/2013
 
 try
-    s = serial('/dev/tty.usbmodem12341', 'BaudRate', 57600);
+    s = serial('/DEV/TTY.USBMODEM12341','BaudRate',57600);
     fopen(s);
     fprintf(s, '[t]');
     fclose(s);

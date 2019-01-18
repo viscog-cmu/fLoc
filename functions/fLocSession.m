@@ -125,6 +125,9 @@ classdef fLocSession
                 session.keyboard = laptop_key;
                 session.input = laptop_key;
             end
+            %for UMass HMRC we cannot specify keyboard. record from all
+%             session.keyboard = [];
+%             session.input = [];
         end
         
         % execute a run of the experiment
@@ -158,14 +161,14 @@ classdef fLocSession
                 Screen('Flip', window_ptr);
                 DrawFormattedText(window_ptr, session.instructions, 'center', 'center', tcol);
                 Screen('Flip', window_ptr);
-                get_key('g', session.keyboard);
+                get_key('5', session.keyboard);
             elseif session.trigger == 1
                 Screen('FillRect', window_ptr, bcol);
                 Screen('Flip', window_ptr);
                 DrawFormattedText(window_ptr, session.instructions, 'center', 'center', tcol); % 'flipHorizontal', 1);
                 Screen('Flip', window_ptr);
                 while 1
-                    get_key('g', session.keyboard);
+                    get_key('g');
                     [status, ~] = start_scan;
                     if status == 0
                         break
@@ -201,18 +204,22 @@ classdef fLocSession
                 Screen('Flip', window_ptr);
                 % collect responses
                 ii_press = []; ii_keys = [];
-                [keys, ie] = record_keys(start_time + (ii - 1) * sdc, stim_dur, k);
+                [keys, ie] = record_keys(start_time + (ii - 1) * sdc, stim_dur, k, KbName('5%'));
                 ii_keys = [ii_keys keys]; ii_press = [ii_press ie];
                 % display ISI if necessary
                 if isi_dur > 0
                     Screen('FillRect', window_ptr, bcol);
                     draw_fixation(window_ptr, center, fcol);
-                    [keys, ie] = record_keys(start_time + (ii - 1) * sdc + stim_dur, isi_dur, k);
+                    [keys, ie] = record_keys(start_time + (ii - 1) * sdc + stim_dur, isi_dur, k, KbName('5%'));
                     ii_keys = [ii_keys keys]; ii_press = [ii_press ie];
                     Screen('Flip', window_ptr);
                 end
                 resp_keys{ii} = ii_keys;
-                resp_press(ii) = min(ii_press);
+                if any(ii_press==0)
+                    resp_press(ii) = 1;
+                else
+                    resp_press(ii) = 0;
+                end
             end
             % store responses
             session.responses(run_num).keys = resp_keys;
@@ -233,7 +240,7 @@ classdef fLocSession
             score_str = [hit_str '\n' fa_str];
             DrawFormattedText(window_ptr, score_str, 'center', 'center', tcol);
             Screen('Flip', window_ptr);
-            get_key('g', session.keyboard);
+            get_key('g1234678', session.keyboard);
             ShowCursor;
             Screen('CloseAll');
         end
