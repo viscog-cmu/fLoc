@@ -240,7 +240,8 @@ classdef fLocSession
             score_str = [hit_str '\n' fa_str];
             DrawFormattedText(window_ptr, score_str, 'center', 'center', tcol);
             Screen('Flip', window_ptr);
-            get_key('g1234678', session.keyboard);
+            WaitSecs(6)
+%             get_key('g1234678', session.keyboard);
             ShowCursor;
             Screen('CloseAll');
         end

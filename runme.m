@@ -17,7 +17,6 @@
 
 
 %% add paths and check inputs
-KbName('UnifyKeyNames')
 
 addpath('functions');
 
@@ -81,7 +80,7 @@ save(fpath, 'session', '-v7.3');
 % execute all runs from start_run to num_runs and save parfiles
 fname = [session.id '_fLocSession.mat'];
 fpath = fullfile(session.exp_dir, 'data', session.id, fname);
-for rr = start_run
+for rr = start_run %% nb: changed to only initiate run of interest
     session = run_exp(session, rr);
     save(fpath, 'session', '-v7.3');
 end
