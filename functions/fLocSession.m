@@ -8,6 +8,7 @@ classdef fLocSession
         sequence  % session fLocSequence object
         responses % behavioral response data structure
         parfiles  % paths to vistasoft-compatible parfiles
+        elapsed_times % num_runs long vector recording time from trigger to close
     end
     
     properties (Hidden)
@@ -20,7 +21,7 @@ classdef fLocSession
     end
     
     properties (Constant)
-        count_down = 12; % pre-experiment countdown (secs)
+        count_down = 5; % pre-experiment countdown (secs)
         stim_size = 768; % size to display images in pixels
     end
     
@@ -67,6 +68,7 @@ classdef fLocSession
             session.date = date;
             session.hit_cnt = zeros(1, session.num_runs);
             session.fa_cnt = zeros(1, session.num_runs);
+            session.elapsed_times = zeros(1, session.num_runs);
         end
         
         % get session-specific id string
@@ -181,6 +183,7 @@ classdef fLocSession
             end
             % display countdown numbers
             [cnt_time, rem_time] = deal(session.count_down + GetSecs);
+            beg_time = cnt_time;
             cnt = session.count_down;
             while rem_time > 0
                 if floor(rem_time) <= cnt
@@ -244,6 +247,7 @@ classdef fLocSession
 %             get_key('g1234678', session.keyboard);
             ShowCursor;
             Screen('CloseAll');
+            session.elapsed_times(run_num) = GetSecs - beg_time;
         end
         
         % quantify performance in stimulus task
