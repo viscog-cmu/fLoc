@@ -17,6 +17,7 @@
 
 
 %% add paths and check inputs
+KbName('UnifyKeyNames')
 
 addpath('functions');
 
