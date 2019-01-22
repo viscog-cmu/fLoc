@@ -1,4 +1,4 @@
-  function runme(name, trigger, stim_set, num_runs, task_num, start_run)
+  function main(name, trigger, stim_set, num_runs, task_num, start_run)
 % Prompts experimenter for session parameters and executes functional
 % localizer experiment used to define regions in high-level visual cortex
 % selective to faces, places, bodies, and printed characters.
@@ -17,6 +17,7 @@
 
 
 %% add paths and check inputs
+KbName('UnifyKeyNames')
 
 addpath('functions');
 
@@ -84,6 +85,6 @@ for rr = start_run %% nb: changed to only initiate run of interest
     session = run_exp(session, rr);
     save(fpath, 'session', '-v7.3');
 end
-write_parfiles(session);
+% write_parfiles(session);
 
 end

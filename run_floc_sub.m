@@ -1,5 +1,5 @@
 
-% convenience wrapper for runme.m
+% convenience wrapper for main.m
 
 function run_floc_sub(sub_num, run_num)
 
@@ -9,11 +9,11 @@ total_runs = 3;
 task_num = 1;
 
 % we code subs by a number string, not initials, for privacy
-sub = sprintf('%02d', sub_num);
+sub = sprintf('sub-%02d', sub_num);
 
 filepath = mfilename('fullpath');
 [dirpath, ~, ~] = fileparts(filepath);
 cd(dirpath)
 
- runme(sub, 0, stim_set, total_runs, task_num, run_num)
+main(sub, 0, stim_set, total_runs, task_num, run_num)
 
