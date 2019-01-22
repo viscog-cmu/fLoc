@@ -15,14 +15,14 @@ classdef fLocSequence
     end
     
     properties (Constant)
-        stim_conds = {'Bodies' 'Characters' 'Faces' 'Objects' 'Places'};
+        stim_conds = {'Characters' 'Faces' 'Scrambled'};
         stim_per_block = 12;   % number of stimuli in a block
         stim_duty_cycle = 0.5; % duration of stimulus duty cycle (s)
     end
     
     properties (Constant, Hidden)
-        stim_set1 = {'body' 'word' 'adult' 'car' 'house'};
-        stim_set2 = {'limb' 'number' 'child' 'instrument' 'corridor'};
+        stim_set1 = {'word' 'adult' 'scrambled'};
+        stim_set2 = {'number' 'child' 'scrambled'};
         stim_per_set = 144;
         task_names = {'1back' '2back' 'oddball'};
         task_freq = 0.5;
