@@ -9,6 +9,7 @@ classdef fLocSession
         responses % behavioral response data structure
         parfiles  % paths to vistasoft-compatible parfiles
         elapsed_times % num_runs long vector recording time from trigger to close
+        ecc_by_run % runwise eccentricity in degrees (an array)
     end
     
     properties (Hidden)
@@ -47,7 +48,7 @@ classdef fLocSession
     methods
         
         % class constructor
-        function session = fLocSession(name, trigger, stim_set, num_runs, task_num)
+        function session = fLocSession(name, trigger, stim_set, num_runs, task_num, ecc_by_run)
             session.name = deblank(name);
             session.trigger = trigger;
             if nargin < 3
@@ -64,6 +65,11 @@ classdef fLocSession
                 session.task_num = 3;
             else
                 session.task_num = task_num;
+            end
+            if nargin < 6
+                session.ecc_by_run = zeros(num_runs,1);
+            else
+                session.ecc_by_run = ecc_by_run;
             end
             session.date = date;
             session.hit_cnt = zeros(1, session.num_runs);
@@ -145,7 +151,8 @@ classdef fLocSession
             resp_keys = {}; resp_press = zeros(length(stim_names), 1);
             % setup screen and load all stimuli in run
             [window_ptr, center] = do_screen;
-            center_x = center(1); center_y = center(2); s = session.stim_size / 2;
+            shift_x = deg2pix(session.ecc_by_run(run_num)); % compute stimulus eccentricity in pix
+            center_x = center(1) + shift_x; center_y = center(2); s = session.stim_size / 2;
             stim_rect = [center_x - s center_y - s center_x + s center_y + s];
             img_ptrs = [];
             for ii = 1:length(stim_names)

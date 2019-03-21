@@ -1,4 +1,4 @@
-  function main(name, trigger, stim_set, num_runs, task_num, start_run)
+  function main(name, trigger, stim_set, num_runs, task_num, start_run, ecc_by_run)
 % Prompts experimenter for session parameters and executes functional
 % localizer experiment used to define regions in high-level visual cortex
 % selective to faces, places, bodies, and printed characters.
@@ -10,10 +10,14 @@
 %   4) num_runs -- number of runs (stimuli repeat after 2 runs/set)
 %   5) task_num -- which task (1 = 1-back, 2 = 2-back, 3 = oddball)
 %   6) start_run -- run number to begin with (if sequence is interrupted)
+%   7) ecc_deg -- shift value to place localizer in left (-) or right (+)
+%       visual field. fixation stays central.
 %
 % Version 3.0 8/2017
 % Anthony Stigliani (astiglia@stanford.edu)
 % Department of Psychology, Stanford University
+
+% edited by Nick Blauch, Jan-Feb 2018. Carnegie Mellon University.
 
 
 %% add paths and check inputs
@@ -66,11 +70,17 @@ if nargin < 6
     start_run = 1;
 end
 
+% eccentricity; default to 0 for central presentation
+if nargin < 7
+    ecc_by_run = 0;
+end
+
 %% initialize session4 object and execute experiment
 
 % setup fLocSession and save session information
 session = fLocSession(name, trigger, stim_set, num_runs, task_num);
 session = load_seqs(session);
+session.ecc_by_run = ecc_by_run;
 session_dir = (fullfile(session.exp_dir, 'data', session.id));
 if ~exist(session_dir, 'dir') == 7
     mkdir(session_dir);

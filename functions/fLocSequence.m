@@ -5,6 +5,7 @@ classdef fLocSequence
         stim_onsets % onset times of each stimulus in a run
         stim_names  % sequence of stimulus filenames
         task_probes % index of stimuli that are task probes
+        eccentricity_deg % default of 0, use to put in left (-) or right (+) visual field
     end
     
     properties (Hidden)
@@ -43,7 +44,7 @@ classdef fLocSequence
     methods
         
         % class constructor
-        function seq = fLocSequence(stim_set, num_runs, task_num)
+        function seq = fLocSequence(stim_set, num_runs, task_num, visual_field, eccentricity_deg)
             if nargin < 1
                 seq.stim_set = 3;
             else
@@ -58,6 +59,11 @@ classdef fLocSequence
                 seq.task_num = 3;
             else
                 seq.task_num = task_num;
+            end
+            if nargin < 4
+                seq.eccentricity_deg = 0;
+            else
+                seq.eccentricity_deg = eccentricity_deg;
             end
         end
         
