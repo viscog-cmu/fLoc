@@ -1,0 +1,6 @@
+data/*
+!data/data_dir.txt
+*.mat
+*.par
+*.*~
+*._*
