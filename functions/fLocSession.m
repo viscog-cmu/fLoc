@@ -30,13 +30,6 @@ classdef fLocSession
     properties (Constant)
         count_down = 4; % pre-experiment countdown (secs)
         stim_size_deg = 5; % size to display images
-        hit_cnt   % number of hits per run
-        fa_cnt    % number of false alarms per run
-    end
-
-    properties (Constant)
-        count_down = 5; % pre-experiment countdown (secs)
-        stim_size = 768; % size to display images in pixels
     end
 
     properties (Constant, Hidden)
@@ -196,8 +189,6 @@ classdef fLocSession
             resp_keys = {}; resp_press = zeros(length(stim_names), 1);
             % setup screen and load all stimuli in run
             [window_ptr, center] = do_screen;
-            center_x = center(1); center_y = center(2); s = session.stim_size / 2;
-            stim_rect = [center_x - s center_y - s center_x + s center_y + s];
             img_ptrs = [];
             for ii = 1:length(stim_names)
                 if strcmp(stim_names{ii}, 'baseline')

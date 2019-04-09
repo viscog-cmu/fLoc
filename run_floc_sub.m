@@ -9,7 +9,7 @@ Screen('Preference', 'SkipSyncTests', 1)
 stim_set = 1;
 total_runs = 3;
 task_num = 1;
-eccentricity_vals = [-3, 0, 3];
+eccentricity_vals = [-6, 0, 6];
 
 if atscanner
     screen_id = 'sibr-proj';

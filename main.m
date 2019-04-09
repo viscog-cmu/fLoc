@@ -65,7 +65,6 @@ if nargin < 6
     start_run = 1;
 end
 
-<<<<<<< HEAD
 if nargin < 7
     atscanner = 0;
 end
