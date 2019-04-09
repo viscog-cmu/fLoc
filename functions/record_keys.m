@@ -1,3 +1,4 @@
+
 function [keys, is_empty] = record_keys(start_time, dur, device_num,include_keys)
 % Collects all keypresses for a given duration (in secs).
 % Written by KGS Lab

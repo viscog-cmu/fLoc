@@ -12,13 +12,8 @@
 %   6) start_run -- run number to begin with (if sequence is interrupted)
 %   7) ecc_deg -- shift value to place localizer in left (-) or right (+)
 %       visual field. fixation stays central.
-%
-% Version 3.0 8/2017
-% Anthony Stigliani (astiglia@stanford.edu)
-% Department of Psychology, Stanford University
 
 % edited by Nick Blauch, Jan-Feb 2018. Carnegie Mellon University.
-
 
 %% add paths and check inputs
 KbName('UnifyKeyNames')
@@ -70,6 +65,7 @@ if nargin < 6
     start_run = 1;
 end
 
+<<<<<<< HEAD
 if nargin < 7
     atscanner = 0;
 end

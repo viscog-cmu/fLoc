@@ -1,5 +1,5 @@
 classdef fLocSequence
-    
+
     properties
         num_runs    % number of runs in experiment
         stim_onsets % onset times of each stimulus in a run
@@ -8,14 +8,14 @@ classdef fLocSequence
         eccentricity_vals % list of 3 eccentricity vals, default [-6, 0, 6]
         ecc_trials % eccentricity for each trial, computed online
     end
-    
+
     properties (Hidden)
         stim_set     % stimulus set/s (1 = standard, 2 = alternate, 3 = both)
         task_num     % task number (1 = 1-back, 2 = 2-back, 3 = oddball)
         block_onsets % block onsets relative to beginning of run (seconds)
         block_conds  % block conditions labels
     end
-    
+
     properties (Constant)
         stim_conds = {'Characters-L', 'Faces-L', 'Scrambled-L', ...
                        'Characters-C', 'Faces-C', 'Scrambled-C', ...
@@ -23,7 +23,7 @@ classdef fLocSequence
         stim_per_block = 8;   % number of stimuli in a block
         stim_duty_cycle = 0.5; % duration of stimulus duty cycle (s)
     end
-    
+
     properties (Constant, Hidden)
         stim_set1 = {'word' 'adult' 'scrambled' 'word' 'adult' 'scrambled' 'word' 'adult' 'scrambled'};
         stim_set2 = {'word' 'adult' 'scrambled'};
@@ -31,7 +31,7 @@ classdef fLocSequence
         task_names = {'1back' '2back' 'oddball'};
         task_freq = 0.5;
     end
-    
+
     properties (Dependent)
         task_name % descriptor for each task number
         run_dur   % run duration (seconds)
@@ -39,14 +39,14 @@ classdef fLocSequence
         isi_dur   % interstimulus interval duration (seconds)
         blocks_per_cond % # of blocks per each condition
     end
-    
+
     properties (Dependent, Hidden)
         num_conds % number of conditions in experiment
         run_sets  % stimulus set used in each run
     end
-    
+
     methods
-        
+
         % class constructor
         function seq = fLocSequence(stim_set, num_runs, task_num, eccentricity_vals)
             if nargin < 1
@@ -70,19 +70,19 @@ classdef fLocSequence
                 seq.eccentricity_vals = eccentricity_vals;
             end
         end
-        
+
         % get name of task
         function task_name = get.task_name(seq)
             task_name = seq.task_names{seq.task_num};
         end
-        
+
         % get run duration given stimulus duty cycle
         function run_dur = get.run_dur(seq)
             block_dur = seq.stim_per_block * seq.stim_duty_cycle;
             blocks_per_run = 1 + (1 + length(seq.stim_conds)) ^ 2 + 1;
             run_dur = block_dur * blocks_per_run;
         end
-        
+
         % get ISI duration given task
         function isi_dur = get.isi_dur(seq)
             if seq.task_num == 3
@@ -91,17 +91,17 @@ classdef fLocSequence
                 isi_dur = 0.1;
             end
         end
-        
+
         % get stimulus duration given ISI
         function stim_dur = get.stim_dur(seq)
             stim_dur = seq.stim_duty_cycle - seq.isi_dur;
         end
-        
+
         % get number of experimental conditions including baseline
         function num_conds = get.num_conds(seq)
             num_conds = 1 + length(seq.stim_conds);
         end
-        
+
         % get image sets for each run given selection
         function run_sets = get.run_sets(seq)
             switch seq.stim_set
@@ -118,7 +118,7 @@ classdef fLocSequence
                     error('Invalid stim_set argument.');
             end
         end
-        
+
         % generate randomized stimulus sequences and insert task probes
         function seq = make_runs(seq)
             ecc_by_cond = [0 seq.eccentricity_vals(1) seq.eccentricity_vals(1) seq.eccentricity_vals(1), ...
@@ -201,8 +201,7 @@ classdef fLocSequence
             seq.task_probes = task_probes;
             seq.ecc_trials = ecc_trials;
         end
-                
-    end
-    
-end
 
+    end
+
+end

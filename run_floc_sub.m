@@ -25,4 +25,3 @@ filepath = mfilename('fullpath');
 cd(dirpath)
 
 main(sub, 0, stim_set, total_runs, task_num, run_num, atscanner, screen_id, eccentricity_vals)
-
