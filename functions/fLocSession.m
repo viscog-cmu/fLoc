@@ -10,6 +10,10 @@ classdef fLocSession
         parfiles  % paths to vistasoft-compatible parfiles
         elapsed_times % num_runs long vector recording time from trigger to close
         ecc_by_run % runwise eccentricity in degrees (an array)
+        screen_id
+        viewdist_mm
+        screenwidth_mm
+        screenwidth_pix
     end
     
     properties (Hidden)
@@ -17,13 +21,15 @@ classdef fLocSession
         task_num  % task number (1 = 1-back, 2 = 2-back, 3 = oddball)
         input     % device number of input used for resonse collection
         keyboard  % device number of native computer keyboard
+        atscanner % whether we are at SIBR
         hit_cnt   % number of hits per run
         fa_cnt    % number of false alarms per run
+        stim_size_pix
     end
     
     properties (Constant)
-        count_down = 5; % pre-experiment countdown (secs)
-        stim_size = 768; % size to display images in pixels
+        count_down = 4; % pre-experiment countdown (secs)
+        stim_size_deg = 5; % size to display images
     end
     
     properties (Constant, Hidden)
@@ -48,7 +54,7 @@ classdef fLocSession
     methods
         
         % class constructor
-        function session = fLocSession(name, trigger, stim_set, num_runs, task_num, ecc_by_run)
+        function session = fLocSession(name, trigger, stim_set, num_runs, task_num, ecc_by_run, atscanner, screen_id)
             session.name = deblank(name);
             session.trigger = trigger;
             if nargin < 3
@@ -70,6 +76,16 @@ classdef fLocSession
                 session.ecc_by_run = zeros(num_runs,1);
             else
                 session.ecc_by_run = ecc_by_run;
+            end
+            if nargin < 7
+                session.atscanner = 0;
+            else
+                session.atscanner = atscanner;
+            end
+            if nargin < 8
+                session.screen_id = 'nick-mbp';
+            else
+                session.screen_id = screen_id;
             end
             session.date = date;
             session.hit_cnt = zeros(1, session.num_runs);
@@ -105,7 +121,26 @@ classdef fLocSession
                 instructions = 'Fixate. Press a button when a scrambled image appears.';
             end
         end
-        
+
+        % get screen calibration properties
+        function session = get_screen_properties(session)
+            print(session.screen_id)
+           switch session.screen_id
+               case 'nick-mbp'
+                   session.screenwidth_pix = 2560;
+                   session.screenwidth_mm = 298;
+                   session.viewdist_mm = 500;
+               case 'sibr-boldscreen'
+                   session.screenwidth_pix = 1920;
+                   session.screenwidth_mm = 518;
+                   session.viewdist_mm = 1260;
+               case 'sibr-proj'
+                   session.screenwidth_pix = 1024;
+                   session.screenwidth_mm = 370;
+                   session.viewdist_mm = 1000;
+           end
+        end
+
         % define/load stimulus sequences for this session
         function session = load_seqs(session)
             fname = [session.id '_fLocSequence.mat'];
@@ -142,6 +177,9 @@ classdef fLocSession
         function session = run_exp(session, run_num)
             % get timing information and initialize response containers
             session = find_inputs(session); k = session.input;
+            session = get_screen_properties(session);
+            session.stim_size_pix = deg2pix(session.stim_size_deg, session.viewdist_mm, ...
+                session.screenwidth_mm, session.screenwidth_pix);
             sdc = session.sequence.stim_duty_cycle;
             stim_dur = session.sequence.stim_dur;
             isi_dur = session.sequence.isi_dur;
@@ -152,7 +190,7 @@ classdef fLocSession
             % setup screen and load all stimuli in run
             [window_ptr, center] = do_screen;
             shift_x = deg2pix(session.ecc_by_run(run_num)); % compute stimulus eccentricity in pix
-            center_x = center(1) + shift_x; center_y = center(2); s = session.stim_size / 2;
+            center_x = center(1) + shift_x; center_y = center(2); s = session.stim_size_pix / 2;
             stim_rect = [center_x - s center_y - s center_x + s center_y + s];
             img_ptrs = [];
             for ii = 1:length(stim_names)
@@ -170,7 +208,15 @@ classdef fLocSession
                 Screen('Flip', window_ptr);
                 DrawFormattedText(window_ptr, session.instructions, 'center', 'center', tcol);
                 Screen('Flip', window_ptr);
-                get_key('5', session.keyboard);
+                if session.atscanner == 1
+                    keyCodes(1:256) = 0;
+                    while keyCodes(160)==0
+                          [keyPressed, secs, keyCodes] = KbCheck;
+                    end
+                else
+                    KbStrokeWait;
+                end
+
             elseif session.trigger == 1
                 Screen('FillRect', window_ptr, bcol);
                 Screen('Flip', window_ptr);
@@ -213,14 +259,15 @@ classdef fLocSession
                 end
                 Screen('Flip', window_ptr);
                 % collect responses
+                check_keys = [KbName('1'):KbName('1')+5, KbName('1!'):KbName('1!')+5];
                 ii_press = []; ii_keys = [];
-                [keys, ie] = record_keys(start_time + (ii - 1) * sdc, stim_dur, k, KbName('5%'));
+                [keys, ie] = record_keys(start_time + (ii - 1) * sdc, stim_dur, k, check_keys);
                 ii_keys = [ii_keys keys]; ii_press = [ii_press ie];
                 % display ISI if necessary
                 if isi_dur > 0
                     Screen('FillRect', window_ptr, bcol);
                     draw_fixation(window_ptr, center, fcol);
-                    [keys, ie] = record_keys(start_time + (ii - 1) * sdc + stim_dur, isi_dur, k, KbName('5%'));
+                    [keys, ie] = record_keys(start_time + (ii - 1) * sdc + stim_dur, isi_dur, k, check_keys);
                     ii_keys = [ii_keys keys]; ii_press = [ii_press ie];
                     Screen('Flip', window_ptr);
                 end
@@ -250,7 +297,7 @@ classdef fLocSession
             score_str = [hit_str '\n' fa_str];
             DrawFormattedText(window_ptr, score_str, 'center', 'center', tcol);
             Screen('Flip', window_ptr);
-            WaitSecs(6)
+            WaitSecs(8)
 %             get_key('g1234678', session.keyboard);
             ShowCursor;
             Screen('CloseAll');
