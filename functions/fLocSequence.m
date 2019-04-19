@@ -153,7 +153,7 @@ classdef fLocSequence
                 stim_mat(:, :, rr) = repmat(cat_seq, seq.stim_per_block, 1);
                 ecc_mat(:, :, rr) = repmat(ecc_seq, seq.stim_per_block, 1);
             end
-            ecc_trials = reshape(ecc_mat, [], 3);
+            ecc_trials = reshape(ecc_mat, [], seq.num_runs);
             stim_cat_list = reshape(stim_mat, [], 1);
             stim_num_list = zeros(size(stim_cat_list));
             for cc = 1:length(unique_cats)
