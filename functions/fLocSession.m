@@ -188,7 +188,7 @@ classdef fLocSession
             stim_dur = session.sequence.stim_dur;
             isi_dur = session.sequence.isi_dur;
             stim_names = session.sequence.stim_names(:, run_num);
-            stim_dir = fullfile(session.exp_dir, 'new_stimuli');
+            stim_dir = fullfile(session.exp_dir, 'stimuli');
             tcol = session.text_color; bcol = session.blank_color; fcol = session.fix_color;
             resp_keys = {}; resp_press = zeros(length(stim_names), 1);
             % setup screen and load all stimuli in run
