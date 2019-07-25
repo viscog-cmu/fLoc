@@ -1,4 +1,5 @@
-function [keys, is_empty] = record_keys(start_time, dur, device_num,ignore_key)
+
+function [keys, is_empty] = record_keys(start_time, dur, device_num,include_keys)
 % Collects all keypresses for a given duration (in secs).
 % Written by KGS Lab
 % Edited by AS 8/2014
@@ -13,8 +14,9 @@ while KbCheck(device_num)
     end
 end
 
-if exist('ignore_key','var')
-    RestrictKeysForKbCheck(setdiff(1:256,ignore_key));
+if exist('include_keys','var')
+%     RestrictKeysForKbCheck(setdiff(1:256,ignore_key));
+    RestrictKeysForKbCheck(include_keys);
 end
 
 % check for pressed keys
