@@ -39,6 +39,7 @@ classdef fLocSession
         text_color = 255;      % instruction text color (grayscale)
         blank_color = 128;     % baseline screen color (grayscale)
         wait_dur = 1;          % seconds to wait for response
+        trig_key = KbName('t');
     end
 
     properties (Dependent)
@@ -137,6 +138,10 @@ classdef fLocSession
                    session.screenwidth_pix = 1024;
                    session.screenwidth_mm = 370;
                    session.viewdist_mm = 1000;
+               case 'bridge'
+                   session.screenwidth_pix = 1920;
+                   session.screenwidth_mm = 698.4;
+                   session.viewdist_mm = 1310;
            end
         end
 
@@ -208,8 +213,8 @@ classdef fLocSession
                 DrawFormattedText(window_ptr, session.instructions, 'center', 'center', tcol);
                 Screen('Flip', window_ptr);
                 if session.atscanner == 1
-                    keyCodes(1:256) = 0;
-                    while keyCodes(160)==0
+                    keyCodes = zeros(256,1);
+                    while keyCodes(session.trig_key)==0
                           [keyPressed, secs, keyCodes] = KbCheck;
                     end
                 else
@@ -258,7 +263,8 @@ classdef fLocSession
                 end
                 Screen('Flip', window_ptr);
                 % collect responses
-                check_keys = [KbName('1'):KbName('1')+5, KbName('1!'):KbName('1!')+5];
+%                 check_keys = [KbName('1'):KbName('1')+5, KbName('1!'):KbName('1!')+5];
+                check_keys = [KbName('b'),KbName('y')];
                 ii_press = []; ii_keys = [];
                 [keys, ie] = record_keys(start_time + (ii - 1) * sdc, stim_dur, k, check_keys);
                 ii_keys = [ii_keys keys]; ii_press = [ii_press ie];

@@ -13,7 +13,7 @@ task_num = 1;
 ecc_by_run = [0, 0, 0];
 
 if at_scanner
-    screen_id = 'sibr-proj';
+    screen_id = 'bridge';
 else
     screen_id = 'nick-mbp';
 end
