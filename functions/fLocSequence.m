@@ -15,13 +15,13 @@ classdef fLocSequence
     end
     
     properties (Constant)
-        stim_conds = {'Faces','Inverted_Faces','Words','Inverted_Words','Objects'};
+        stim_conds = {'Faces','Inverted_Faces','Words','Inverted_Words','Objects', 'Letter_Strings'};
         stim_per_block = 12;   % number of stimuli in a block
         stim_duty_cycle = 0.5; % duration of stimulus duty cycle (s)
     end
     
     properties (Constant, Hidden)
-        stim_set1 = {'face' 'inverted_face' 'word' 'inverted_word' 'object'};
+        stim_set1 = {'face' 'inverted_face' 'word' 'inverted_word' 'object' 'letter_string'};
 %         stim_set2 = {'limb' 'number' 'child' 'instrument' 'corridor'};
         stim_per_set = 104;
         task_names = {'1back' '2back' 'oddball'};
