@@ -5,7 +5,7 @@ function [w, center] = doScreen
 
 % open window and find center
 S = Screen('Screens');
-screen_num = max(S);
+screen_num = max(S)-1;
 [w, rect] = Screen('OpenWindow', screen_num);
 center = rect(3:4) / 2;
 

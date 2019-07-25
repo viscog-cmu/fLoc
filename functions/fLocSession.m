@@ -239,8 +239,8 @@ classdef fLocSession
                 end
             end
             % display countdown numbers
-            [cnt_time, rem_time] = deal(session.count_down + GetSecs);
-            beg_time = cnt_time;
+            beg_time = GetSecs;
+            [cnt_time, rem_time] = deal(session.count_down + beg_time);
             cnt = session.count_down;
             while rem_time > 0
                 if floor(rem_time) <= cnt
@@ -272,9 +272,9 @@ classdef fLocSession
                 if isi_dur > 0
                     Screen('FillRect', window_ptr, bcol);
                     draw_fixation(window_ptr, center, fcol);
+                    Screen('Flip', window_ptr);
                     [keys, ie] = record_keys(start_time + (ii - 1) * sdc + stim_dur, isi_dur, k, check_keys);
                     ii_keys = [ii_keys keys]; ii_press = [ii_press ie];
-                    Screen('Flip', window_ptr);
                 end
                 resp_keys{ii} = ii_keys;
                 if any(ii_press==0)
@@ -300,13 +300,14 @@ classdef fLocSession
             Screen('FillRect', window_ptr, bcol);
             Screen('Flip', window_ptr);
             score_str = [hit_str '\n' fa_str];
+            WaitSecs(8);
+            session.elapsed_times(run_num) = GetSecs - beg_time;
+%             get_key('g1234678', session.keyboard);
             DrawFormattedText(window_ptr, score_str, 'center', 'center', tcol);
             Screen('Flip', window_ptr);
-            WaitSecs(8)
-%             get_key('g1234678', session.keyboard);
+            WaitSecs(2)
             ShowCursor;
             Screen('CloseAll');
-            session.elapsed_times(run_num) = GetSecs - beg_time;
         end
 
         % quantify performance in stimulus task
