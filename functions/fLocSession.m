@@ -14,6 +14,7 @@ classdef fLocSession
         viewdist_mm
         screenwidth_mm
         screenwidth_pix
+        eyetracking
     end
 
     properties (Hidden)
@@ -130,18 +131,22 @@ classdef fLocSession
                    session.screenwidth_pix = 2560;
                    session.screenwidth_mm = 298;
                    session.viewdist_mm = 500;
+                   session.eyetracking = 0;
                case 'sibr-boldscreen'
                    session.screenwidth_pix = 1920;
                    session.screenwidth_mm = 518;
                    session.viewdist_mm = 1260;
+                   session.eyetracking = 1;
                case 'sibr-proj'
                    session.screenwidth_pix = 1024;
                    session.screenwidth_mm = 370;
                    session.viewdist_mm = 1000;
+                   session.eyetracking = 1;
                case 'bridge'
                    session.screenwidth_pix = 1920;
                    session.screenwidth_mm = 698.4;
                    session.viewdist_mm = 1310;
+                   session.eyetracking = 0;
            end
         end
 
@@ -193,7 +198,26 @@ classdef fLocSession
             resp_keys = {}; resp_press = zeros(length(stim_names), 1);
             % setup screen and load all stimuli in run
             [window_ptr, center] = do_screen;
-            shift_x = deg2pix(session.ecc_by_run(run_num)); % compute stimulus eccentricity in pix
+            % setup eyetracker if tracking
+            if session.eyetracking
+                [windowPtr_cal, rect_cal] = Screen('OpenWindow', window,[],[320,256,960,768]);
+                el=EyelinkInitDefaults(window);
+                if ~EyelinkInit(0, 1)
+                    fprintf('Eyelink Init aborted.\n');
+                    cleanup;  % cleanup function
+                    return;
+                end
+                [v vs]=Eyelink('GetTrackerVersion');
+                fprintf('Running experiment on a ''%s'' tracker.\n', vs );
+                % make sure that we get gaze data from the Eyelink
+                Eyelink('Command', 'link_sample_data = LEFT,RIGHT,GAZE,AREA');
+                EyelinkDoTrackerSetup(el);
+                Screen('Close', windowPtr_cal);
+                Eyelink('openfile', sprintf('%s/eyelink_run-%02d.edf',session.id,run_num));
+                Eyelink('StartRecording');
+            end
+            % compute stimulus eccentricity in pix
+            shift_x = deg2pix(session.ecc_by_run(run_num)); 
             center_x = center(1) + shift_x; center_y = center(2); s = session.stim_size_pix / 2;
             stim_rect = [center_x - s center_y - s center_x + s center_y + s];
             img_ptrs = [];
@@ -238,6 +262,9 @@ classdef fLocSession
                     end
                 end
             end
+            if session.eyetracking
+                Eyelink('Message', 'countdown_start');
+            end
             % display countdown numbers
             beg_time = GetSecs;
             [cnt_time, rem_time] = deal(session.count_down + beg_time);
@@ -250,9 +277,18 @@ classdef fLocSession
                 end
                 rem_time = cnt_time - GetSecs;
             end
+            if session.eyetracking
+                Eyelink('Message', 'exp_start');
+            end
             % main display loop
             start_time = GetSecs;
             for ii = 1:length(stim_names)
+                if session.eyetracking
+                    % record start of blocks in eyelink file
+                    if ~ mod(ii-1,session.sequence.stim_per_block)
+                       EyeLink('Message', sprintf('block_start-%s',strtok(stim_names{ii},'-')))
+                    end
+                end
                 % display blank screen if baseline and image if stimulus
                 if strcmp(stim_names{ii}, 'baseline')
                     Screen('FillRect', window_ptr, bcol);
@@ -283,6 +319,9 @@ classdef fLocSession
                     resp_press(ii) = 0;
                 end
             end
+            if session.eyetracking
+                EyeLink('Message', 'end_stim_loop')
+            end
             % store responses
             session.responses(run_num).keys = resp_keys;
             session.responses(run_num).press = resp_press;
@@ -302,7 +341,13 @@ classdef fLocSession
             score_str = [hit_str '\n' fa_str];
             WaitSecs(8);
             session.elapsed_times(run_num) = GetSecs - beg_time;
-%             get_key('g1234678', session.keyboard);
+            if session.eyetracking
+                EyeLink('Message', 'end_exp_and_show_perf')
+                Eyelink('StopRecording');
+                Eyelink('CloseFile');
+                EyeLink('ReceiveFile', sprintf('%s/eyelink_run-%02d.edf',session.id,run_num));
+            end
+            % get_key('g1234678', session.keyboard);
             DrawFormattedText(window_ptr, score_str, 'center', 'center', tcol);
             Screen('Flip', window_ptr);
             WaitSecs(2)

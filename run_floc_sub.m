@@ -8,7 +8,7 @@ Screen('Preference', 'TextRenderer', 0);
 
 % hard-coded parameters
 stim_set = 1;
-total_runs = 3;
+total_runs = 5;
 task_num = 1;
 ecc_by_run = [0, 0, 0];
 
