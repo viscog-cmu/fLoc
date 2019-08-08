@@ -10,7 +10,7 @@ Screen('Preference', 'TextRenderer', 0);
 stim_set = 1;
 total_runs = 5;
 task_num = 1;
-ecc_by_run = [0, 0, 0];
+ecc_by_run = zeros(total_runs,1);
 
 if at_scanner
     screen_id = 'bridge';
@@ -26,4 +26,3 @@ filepath = mfilename('fullpath');
 cd(dirpath)
 
 main(sub, 0, stim_set, total_runs, task_num, run_num, ecc_by_run, at_scanner, screen_id)
-
