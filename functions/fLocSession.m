@@ -213,7 +213,9 @@ classdef fLocSession
                 Eyelink('Command', 'link_sample_data = LEFT,RIGHT,GAZE,AREA');
                 EyelinkDoTrackerSetup(el);
                 Screen('Close', windowPtr_cal);
-                Eyelink('openfile', sprintf('%s/eyelink_run-%02d.edf',session.id,run_num));
+                eyelink_tmp_fn = sprintf('%d.edf', run_num);
+                eyelink_fn = sprintf('%s/eyelink_run-%02d.edf',session.id,run_num);
+                Eyelink('openfile', eyelink_tmp_fn)
                 Eyelink('StartRecording');
             end
             % compute stimulus eccentricity in pix
@@ -345,7 +347,8 @@ classdef fLocSession
                 EyeLink('Message', 'end_exp_and_show_perf')
                 Eyelink('StopRecording');
                 Eyelink('CloseFile');
-                EyeLink('ReceiveFile', sprintf('%s/eyelink_run-%02d.edf',session.id,run_num));
+                EyeLink('ReceiveFile', eyelink_tmp_fn)
+                movefile(eyelink_tmp_fn, eyelink_fn);
             end
             % get_key('g1234678', session.keyboard);
             DrawFormattedText(window_ptr, score_str, 'center', 'center', tcol);
